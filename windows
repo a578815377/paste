@@ -1,0 +1,1 @@
+msiexec -i ​windows_exporter-0.16.0-amd64.msi ENABLED_COLLECTORS=cpu,cs,tcp,iis,logical_disk,net,os,service,system,textfile LISTEN_ADDR=0.0.0.0 LISTEN_PORT=9182 METRICS_PATH=/metrics
