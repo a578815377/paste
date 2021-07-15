@@ -1,0 +1,96 @@
+# my global config
+global:
+  scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      # - alertmanager:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  - job_name: 'ping_all'
+    scrape_interval: 1m
+    metrics_path: /probe
+    params:
+      module: [icmp]
+    static_configs:
+     - targets:
+       - 223.5.5.5
+       labels:
+         instance: jq
+     - targets:
+       - 111.40.181.18
+       labels:
+         instance: yd
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: __address__
+        replacement: 127.0.0.1:9115 # 
+  - job_name: 'http_get_all'
+    scrape_interval: 30s
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+        - http://www.wayun.cn
+        - http://www.cnhlj.cn
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9115
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'prometheus'
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+    - targets: ['localhost:9090']
+  - job_name: 'mysql'
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+    - targets: ['113.6.251.220:9104']
+  
+  - job_name: 'VirtualMachine'
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+    - targets: ['113.6.251.34:9182'] 
+    - targets: ['113.6.251.71:9182']
+    - targets: ['219.147.85.139:9182']
+    - targets: ['113.6.252.9:9182']
+    - targets: ['113.6.251.92:9182']
+    - targets: ['113.6.251.230:9182']
+    - targets: ['113.6.252.160:9182']
+    - targets: ['113.6.251.135:9182']
+    - targets: ['113.6.251.136:9182']
+    - targets: ['125.211.198.172:9182']
+    - targets: ['218.8.241.233:9182']
+  - job_name: 'vhost iis'
+    static_configs:
+    - targets: ['113.6.251.88:9182']
+    - targets: ['113.6.252.206:9182']
+    - targets: ['113.6.251.206:9182']
+    - targets: ['125.211.217.246:9182'] 
